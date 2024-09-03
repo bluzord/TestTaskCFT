@@ -12,7 +12,7 @@ public class StatsService {
 
 
     //Методы для целочисленных
-    public BigInteger getMaxInteger() {
+    private BigInteger getMaxInteger() {
         BigInteger maxValue = integers.getFirst();
         for (BigInteger i : integers) {
             maxValue = maxValue.max(i);
@@ -20,7 +20,7 @@ public class StatsService {
         return maxValue;
     }
 
-    public BigInteger getMinInteger() {
+    private BigInteger getMinInteger() {
         BigInteger minValue = integers.getFirst();
         for (BigInteger i : integers) {
             minValue = minValue.min(i);
@@ -28,7 +28,7 @@ public class StatsService {
         return minValue;
     }
 
-    public BigInteger getIntegerSum() {
+    private BigInteger getIntegerSum() {
         BigInteger sum = new BigInteger("0");
         for (BigInteger i : integers) {
             sum = sum.add(i);
@@ -36,13 +36,13 @@ public class StatsService {
         return sum;
     }
 
-    public BigDecimal getIntegerAverage() {
+    private BigDecimal getIntegerAverage() {
         BigDecimal sum = new BigDecimal(getIntegerSum());
         return BigDecimal.valueOf(sum.doubleValue()/integers.size());
     }
 
     //Методы для вещественных
-    public BigDecimal getMaxFloat() {
+    private BigDecimal getMaxFloat() {
         BigDecimal maxValue = floats.getFirst();
         for (BigDecimal f : floats) {
             maxValue = maxValue.max(f);
@@ -50,7 +50,7 @@ public class StatsService {
         return maxValue;
     }
 
-    public BigDecimal getMinFloat() {
+    private BigDecimal getMinFloat() {
         BigDecimal minValue = floats.getFirst();
         for (BigDecimal f : floats) {
             minValue = minValue.min(f);
@@ -58,7 +58,7 @@ public class StatsService {
         return minValue;
     }
 
-    public BigDecimal getFloatSum() {
+    private BigDecimal getFloatSum() {
         BigDecimal sum = new BigDecimal("0");
         for (BigDecimal f : floats) {
             sum = sum.add(f);
@@ -66,12 +66,12 @@ public class StatsService {
         return sum;
     }
 
-    public BigDecimal getFloatAverage() {
+    private BigDecimal getFloatAverage() {
         return BigDecimal.valueOf(getFloatSum().doubleValue()/floats.size());
     }
 
     //Методы для строк
-    public int getMaxStringLength() {
+    private int getMaxStringLength() {
         int maxLength = strings.getFirst().length();
         for (String s : strings) {
             if (s.length() > maxLength) {
@@ -81,7 +81,7 @@ public class StatsService {
         return maxLength;
     }
 
-    public int getMinStringLength() {
+    private int getMinStringLength() {
         int minLength = strings.getFirst().length();
         for (String s : strings) {
             if (s.length() < minLength) {
@@ -89,6 +89,55 @@ public class StatsService {
             }
         }
         return minLength;
+    }
+
+    public void printIntegerShortStats() {
+        if (!integers.isEmpty()) {
+            System.out.println("---Integers:---");
+            System.out.println("Count: " + integers.size());
+        }
+    }
+
+    public void printIntegerFullStats() {
+        if (!integers.isEmpty()) {
+            printIntegerShortStats();
+            System.out.println("Min: " + getMinInteger());
+            System.out.println("Max: " + getMaxInteger());
+            System.out.println("Sum: " + getIntegerSum());
+            System.out.println("Average: " + getIntegerAverage());
+        }
+    }
+
+    public void printFloatShortStats() {
+        if (!floats.isEmpty()) {
+            System.out.println("---Floats:---");
+            System.out.println("Count: " + floats.size());
+        }
+    }
+
+    public void printFloatFullStats() {
+        if (!floats.isEmpty()) {
+            printFloatShortStats();
+            System.out.println("Min: " + getMinFloat());
+            System.out.println("Max: " + getMaxFloat());
+            System.out.println("Sum: " + getFloatSum());
+            System.out.println("Average: " + getFloatAverage());
+        }
+    }
+
+    public void printStringShortStats() {
+        if (!strings.isEmpty()) {
+            System.out.println("---Strings:---");
+            System.out.println("Count: " + strings.size());
+        }
+    }
+
+    public void printStringFullStats() {
+        if (!strings.isEmpty()) {
+            printStringShortStats();
+            System.out.println("Min Length: " + getMinStringLength());
+            System.out.println("Max Length: " + getMaxStringLength());
+        }
     }
 
     public List<String> getStrings() {
