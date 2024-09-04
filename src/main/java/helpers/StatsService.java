@@ -2,6 +2,7 @@ package helpers;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class StatsService {
 
     private BigDecimal getIntegerAverage() {
         BigDecimal sum = new BigDecimal(getIntegerSum());
-        return BigDecimal.valueOf(sum.doubleValue()/integers.size());
+        return sum.divide(new BigDecimal(integers.size(), MathContext.DECIMAL128));
     }
 
     //Методы для вещественных
@@ -67,7 +68,7 @@ public class StatsService {
     }
 
     private BigDecimal getFloatAverage() {
-        return BigDecimal.valueOf(getFloatSum().doubleValue()/floats.size());
+        return getFloatSum().divide(new BigDecimal(floats.size()), MathContext.DECIMAL128);
     }
 
     //Методы для строк
@@ -94,49 +95,49 @@ public class StatsService {
     public void printIntegerShortStats() {
         if (!integers.isEmpty()) {
             System.out.println("---Integers:---");
-            System.out.println("Count: " + integers.size());
+            System.out.println("Количество: " + integers.size());
         }
     }
 
     public void printIntegerFullStats() {
         if (!integers.isEmpty()) {
             printIntegerShortStats();
-            System.out.println("Min: " + getMinInteger());
-            System.out.println("Max: " + getMaxInteger());
-            System.out.println("Sum: " + getIntegerSum());
-            System.out.println("Average: " + getIntegerAverage());
+            System.out.println("Минимум: " + getMinInteger());
+            System.out.println("Максимум: " + getMaxInteger());
+            System.out.println("Сумма: " + getIntegerSum());
+            System.out.println("Среднее: " + getIntegerAverage());
         }
     }
 
     public void printFloatShortStats() {
         if (!floats.isEmpty()) {
             System.out.println("---Floats:---");
-            System.out.println("Count: " + floats.size());
+            System.out.println("Количество: " + floats.size());
         }
     }
 
     public void printFloatFullStats() {
         if (!floats.isEmpty()) {
             printFloatShortStats();
-            System.out.println("Min: " + getMinFloat());
-            System.out.println("Max: " + getMaxFloat());
-            System.out.println("Sum: " + getFloatSum());
-            System.out.println("Average: " + getFloatAverage());
+            System.out.println("Минимум: " + getMinFloat());
+            System.out.println("Максимум: " + getMaxFloat());
+            System.out.println("Сумма: " + getFloatSum());
+            System.out.println("Среднее: " + getFloatAverage());
         }
     }
 
     public void printStringShortStats() {
         if (!strings.isEmpty()) {
             System.out.println("---Strings:---");
-            System.out.println("Count: " + strings.size());
+            System.out.println("Количество: " + strings.size());
         }
     }
 
     public void printStringFullStats() {
         if (!strings.isEmpty()) {
             printStringShortStats();
-            System.out.println("Min Length: " + getMinStringLength());
-            System.out.println("Max Length: " + getMaxStringLength());
+            System.out.println("Минимальная длина: " + getMinStringLength());
+            System.out.println("Максимальная длина: " + getMaxStringLength());
         }
     }
 

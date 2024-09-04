@@ -7,6 +7,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class Solution implements Callable<Integer> {
     private String integerOutput = "integers.txt";
     private String stringOutput = "strings.txt";
     private String floatsOutput = "floats.txt";
+    private List<BufferedReader> readers = new ArrayList<>();
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Список опций.")
     Boolean help;
@@ -37,7 +39,7 @@ public class Solution implements Callable<Integer> {
     @Option(names = {"-f", "--full"}, description = "Отображение полной статистики.")
     Boolean isFullStats = false;
 
-    @Option(names = "-a", description = "Режим добавления в существующие файлы.")
+    @Option(names = {"-a", "--append"}, description = "Режим добавления в существующие файлы.")
     Boolean isCurrentFiles = false;
 
     @Parameters(description = "Входные файлы.")
@@ -57,26 +59,47 @@ public class Solution implements Callable<Integer> {
         stringOutput = path  + prefix + stringOutput;
         floatsOutput = path  + prefix + floatsOutput;
 
-        for (String fileName : fileNames) {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String type = TypeChecker.checkType(line);
-                switch (type) {
-                    case "integer" -> statsService.getIntegers().add(new BigInteger(line));
-                    case "float" -> statsService.getFloats().add(new BigDecimal(line));
-                    case "string" -> statsService.getStrings().add(line);
-                }
-            }
+        try {
+            //TODO: создание файла, проверка txt
+        } catch (Exception e) {
+
         }
 
+        for (String fileName : fileNames) {
+            readers.add(new BufferedReader(new FileReader(fileName)));
+        }
+
+        boolean hasLines;
+        do {
+            hasLines = false;
+            for (BufferedReader reader : readers) {
+                String line = reader.readLine();
+                if (line != null) {
+                    String type = TypeChecker.checkType(line);
+                    switch (type) {
+                        case "integer" -> statsService.getIntegers().add(new BigInteger(line));
+                        case "float" -> statsService.getFloats().add(new BigDecimal(line));
+                        case "string" -> statsService.getStrings().add(line);
+                    }
+                    hasLines = true;
+                }
+            }
+        } while (hasLines);
+
+        for (BufferedReader reader : readers) {
+            reader.close();
+        }
+
+
         if (isShortStats) {
+            //TODO: печать о нуле элементов
             statsService.printIntegerShortStats();
             statsService.printFloatShortStats();
             statsService.printStringShortStats();
         }
 
         if (isFullStats) {
+            //TODO: печать о нуле элементов
             statsService.printIntegerFullStats();
             statsService.printFloatFullStats();
             statsService.printStringFullStats();
@@ -84,6 +107,7 @@ public class Solution implements Callable<Integer> {
 
         FileWriter writer;
         if (!statsService.getIntegers().isEmpty()) {
+            //TODO: проверка директории, предложение создать в текущем файле
             writer = new FileWriter(integerOutput, isCurrentFiles);
             for (BigInteger i : statsService.getIntegers()) {
                 writer.write(i + "\n");
@@ -92,6 +116,7 @@ public class Solution implements Callable<Integer> {
         }
 
         if (!statsService.getFloats().isEmpty()) {
+            //TODO: проверка директории, предложение создать в текущем файле
             writer = new FileWriter(floatsOutput, isCurrentFiles);
             for (BigDecimal f : statsService.getFloats()) {
                 writer.write(f + "\n");
@@ -100,6 +125,7 @@ public class Solution implements Callable<Integer> {
         }
 
         if (!statsService.getStrings().isEmpty()) {
+            //TODO: проверка директории, предложение создать в текущем файле
             writer = new FileWriter(stringOutput, isCurrentFiles);
             for (String s : statsService.getStrings()) {
                 writer.write(s + "\n");
