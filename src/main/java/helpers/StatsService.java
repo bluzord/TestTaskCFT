@@ -93,15 +93,18 @@ public class StatsService {
     }
 
     public void printIntegerShortStats() {
+        System.out.println("---Integers:---");
         if (!integers.isEmpty()) {
-            System.out.println("---Integers:---");
             System.out.println("Количество: " + integers.size());
+        }
+        else {
+            System.out.println("Отсутствуют целые числа.");
         }
     }
 
     public void printIntegerFullStats() {
+        printIntegerShortStats();
         if (!integers.isEmpty()) {
-            printIntegerShortStats();
             System.out.println("Минимум: " + getMinInteger());
             System.out.println("Максимум: " + getMaxInteger());
             System.out.println("Сумма: " + getIntegerSum());
@@ -110,15 +113,18 @@ public class StatsService {
     }
 
     public void printFloatShortStats() {
+        System.out.println("---Floats:---");
         if (!floats.isEmpty()) {
-            System.out.println("---Floats:---");
             System.out.println("Количество: " + floats.size());
+        }
+        else {
+            System.out.println("Отсутствуют вещественные числа.");
         }
     }
 
     public void printFloatFullStats() {
+        printFloatShortStats();
         if (!floats.isEmpty()) {
-            printFloatShortStats();
             System.out.println("Минимум: " + getMinFloat());
             System.out.println("Максимум: " + getMaxFloat());
             System.out.println("Сумма: " + getFloatSum());
@@ -127,15 +133,18 @@ public class StatsService {
     }
 
     public void printStringShortStats() {
+        System.out.println("---Strings:---");
         if (!strings.isEmpty()) {
-            System.out.println("---Strings:---");
             System.out.println("Количество: " + strings.size());
+        }
+        else {
+            System.out.println("Отсутствуют строки.");
         }
     }
 
     public void printStringFullStats() {
+        printStringShortStats();
         if (!strings.isEmpty()) {
-            printStringShortStats();
             System.out.println("Минимальная длина: " + getMinStringLength());
             System.out.println("Максимальная длина: " + getMaxStringLength());
         }

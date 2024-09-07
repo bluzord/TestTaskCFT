@@ -2,14 +2,12 @@ package task;
 
 import helpers.StatsService;
 import helpers.TypeChecker;
+import helpers.TypeOfString;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -60,12 +58,13 @@ public class Solution implements Callable<Integer> {
         floatsOutput = path  + prefix + floatsOutput;
 
         try {
-            //TODO: создание файла, проверка txt
+            //TODO: создание файла, проверка txt, ends with
         } catch (Exception e) {
 
         }
 
         for (String fileName : fileNames) {
+            //TODO: создавать от файла
             readers.add(new BufferedReader(new FileReader(fileName)));
         }
 
@@ -75,11 +74,11 @@ public class Solution implements Callable<Integer> {
             for (BufferedReader reader : readers) {
                 String line = reader.readLine();
                 if (line != null) {
-                    String type = TypeChecker.checkType(line);
+                    TypeOfString type = TypeChecker.checkType(line);
                     switch (type) {
-                        case "integer" -> statsService.getIntegers().add(new BigInteger(line));
-                        case "float" -> statsService.getFloats().add(new BigDecimal(line));
-                        case "string" -> statsService.getStrings().add(line);
+                        case TypeOfString.INTEGER -> statsService.getIntegers().add(new BigInteger(line));
+                        case TypeOfString.FLOAT -> statsService.getFloats().add(new BigDecimal(line));
+                        case TypeOfString.STRING -> statsService.getStrings().add(line);
                     }
                     hasLines = true;
                 }
@@ -90,16 +89,13 @@ public class Solution implements Callable<Integer> {
             reader.close();
         }
 
-
         if (isShortStats) {
-            //TODO: печать о нуле элементов
             statsService.printIntegerShortStats();
             statsService.printFloatShortStats();
             statsService.printStringShortStats();
         }
 
         if (isFullStats) {
-            //TODO: печать о нуле элементов
             statsService.printIntegerFullStats();
             statsService.printFloatFullStats();
             statsService.printStringFullStats();
@@ -109,8 +105,8 @@ public class Solution implements Callable<Integer> {
         if (!statsService.getIntegers().isEmpty()) {
             //TODO: проверка директории, предложение создать в текущем файле
             writer = new FileWriter(integerOutput, isCurrentFiles);
-            for (BigInteger i : statsService.getIntegers()) {
-                writer.write(i + "\n");
+            for (BigInteger val : statsService.getIntegers()) {
+                writer.write(val + "\n");
             }
             writer.close();
         }
@@ -118,8 +114,8 @@ public class Solution implements Callable<Integer> {
         if (!statsService.getFloats().isEmpty()) {
             //TODO: проверка директории, предложение создать в текущем файле
             writer = new FileWriter(floatsOutput, isCurrentFiles);
-            for (BigDecimal f : statsService.getFloats()) {
-                writer.write(f + "\n");
+            for (BigDecimal val : statsService.getFloats()) {
+                writer.write(val + "\n");
             }
             writer.close();
         }
@@ -127,8 +123,8 @@ public class Solution implements Callable<Integer> {
         if (!statsService.getStrings().isEmpty()) {
             //TODO: проверка директории, предложение создать в текущем файле
             writer = new FileWriter(stringOutput, isCurrentFiles);
-            for (String s : statsService.getStrings()) {
-                writer.write(s + "\n");
+            for (String val : statsService.getStrings()) {
+                writer.write(val + "\n");
             }
             writer.close();
         }
