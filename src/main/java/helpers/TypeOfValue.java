@@ -1,6 +1,6 @@
 package helpers;
 
-public enum TypeOfString {
+public enum TypeOfValue {
     STRING,
     FLOAT,
     INTEGER

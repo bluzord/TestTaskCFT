@@ -5,17 +5,17 @@ import java.math.BigInteger;
 
 public class TypeChecker {
 
-    public static TypeOfString checkType(String value) {
+    public static TypeOfValue checkType(String value) {
         try {
             new BigDecimal(value);
             try {
                 new BigInteger(value);
-                return TypeOfString.INTEGER;
+                return TypeOfValue.INTEGER;
             } catch (Exception e) {
-                return TypeOfString.FLOAT;
+                return TypeOfValue.FLOAT;
             }
         } catch (Exception e) {
-            return TypeOfString.STRING;
+            return TypeOfValue.STRING;
         }
     }
 }

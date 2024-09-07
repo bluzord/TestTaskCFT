@@ -2,7 +2,7 @@ package task;
 
 import helpers.StatsService;
 import helpers.TypeChecker;
-import helpers.TypeOfString;
+import helpers.TypeOfValue;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -10,6 +10,7 @@ import picocli.CommandLine.Parameters;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,27 +21,27 @@ public class Solution implements Callable<Integer> {
     private String integerOutput = "integers.txt";
     private String stringOutput = "strings.txt";
     private String floatsOutput = "floats.txt";
-    private List<BufferedReader> readers = new ArrayList<>();
+    private final List<BufferedReader> readers = new ArrayList<>();
 
-    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Список опций.")
+    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Available options.")
     Boolean help;
 
-    @Option(names = {"-o", "--output"}, description = "Путь для выходных файлов.")
+    @Option(names = {"-o", "--output"}, description = "Set path for output files.")
     String path = "";
 
-    @Option(names = {"-p", "--prefix"}, description = "Префикс для выходных файлов.")
+    @Option(names = {"-p", "--prefix"}, description = "Set prefix for output files.")
     String prefix = "";
 
-    @Option(names = {"-s", "--short"}, description = "Отображение краткой статистики.")
+    @Option(names = {"-s", "--short"}, description = "Show short statistics.")
     Boolean isShortStats = false;
 
-    @Option(names = {"-f", "--full"}, description = "Отображение полной статистики.")
+    @Option(names = {"-f", "--full"}, description = "Show full statistics.")
     Boolean isFullStats = false;
 
-    @Option(names = {"-a", "--append"}, description = "Режим добавления в существующие файлы.")
-    Boolean isCurrentFiles = false;
+    @Option(names = {"-a", "--append"}, description = "Append to files.")
+    Boolean isAppend = false;
 
-    @Parameters(description = "Входные файлы.")
+    @Parameters(description = "Input files.")
     List<String> fileNames = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -50,22 +51,28 @@ public class Solution implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        if (!path.isEmpty()) {
-            path += "/";
-        }
-        integerOutput = path + prefix + integerOutput;
-        stringOutput = path  + prefix + stringOutput;
-        floatsOutput = path  + prefix + floatsOutput;
-
-        try {
-            //TODO: создание файла, проверка txt, ends with
-        } catch (Exception e) {
-
-        }
 
         for (String fileName : fileNames) {
-            //TODO: создавать от файла
-            readers.add(new BufferedReader(new FileReader(fileName)));
+            try {
+                File file = new File(fileName);
+
+                if (!file.exists()) {
+                    throw new FileNotFoundException("\"" + fileName + "\"" + " not found. It will not be processed.");
+                }
+
+                if (!file.isFile()) {
+                    throw new FileNotFoundException("\"" + fileName + "\"" + " is not a file. It will not be processed.");
+                }
+
+                if (!fileName.endsWith(".txt")) {
+                    throw new FileNotFoundException("\"" + fileName + "\"" + " is not a txt file. It will not be processed.");
+                }
+
+                readers.add(new BufferedReader(new FileReader(file)));
+
+            } catch (FileNotFoundException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         boolean hasLines;
@@ -74,11 +81,11 @@ public class Solution implements Callable<Integer> {
             for (BufferedReader reader : readers) {
                 String line = reader.readLine();
                 if (line != null) {
-                    TypeOfString type = TypeChecker.checkType(line);
+                    TypeOfValue type = TypeChecker.checkType(line);
                     switch (type) {
-                        case TypeOfString.INTEGER -> statsService.getIntegers().add(new BigInteger(line));
-                        case TypeOfString.FLOAT -> statsService.getFloats().add(new BigDecimal(line));
-                        case TypeOfString.STRING -> statsService.getStrings().add(line);
+                        case INTEGER -> statsService.getIntegers().add(new BigInteger(line));
+                        case FLOAT -> statsService.getFloats().add(new BigDecimal(line));
+                        case STRING -> statsService.getStrings().add(line);
                     }
                     hasLines = true;
                 }
@@ -101,10 +108,51 @@ public class Solution implements Callable<Integer> {
             statsService.printStringFullStats();
         }
 
+        if (!prefix.isEmpty()) {
+            try  {
+                Paths.get(prefix + integerOutput);
+                integerOutput = prefix + integerOutput;
+                floatsOutput = prefix + floatsOutput;
+                stringOutput = prefix + stringOutput;
+            } catch (InvalidPathException e) {
+                System.err.println("Prefix " + "\"" + prefix + "\"" + " is invalid. Files will be created without prefix.");
+            }
+        }
+
+        //обработка директории
+        if (!path.isEmpty()) {
+            File directory = null;
+            try {
+                Paths.get(path);
+                directory = new File(path);
+                if (!directory.isDirectory()) {
+                    throw new NotDirectoryException(path);
+                }
+
+                if (!directory.exists()) {
+                    throw new FileNotFoundException("\"" + path + "\"" + "does not exist. The folder will be created automatically.");
+                }
+
+            } catch (InvalidPathException | NotDirectoryException e) {
+                System.err.println("Path " + "\"" + path + "\"" + " is invalid. Files will be created in the current folder.");
+            } catch (FileNotFoundException e) {
+                System.err.println(e.getMessage());
+                if (directory.mkdir()) {
+                    path += "/";
+                    integerOutput = path + integerOutput;
+                    floatsOutput = path + floatsOutput;
+                    stringOutput = path + stringOutput;
+                }
+                else {
+                    System.err.println("Folder not created. Files will be created in the current folder.");
+                }
+            }
+
+        }
+
         FileWriter writer;
         if (!statsService.getIntegers().isEmpty()) {
-            //TODO: проверка директории, предложение создать в текущем файле
-            writer = new FileWriter(integerOutput, isCurrentFiles);
+            writer = new FileWriter(integerOutput, isAppend);
             for (BigInteger val : statsService.getIntegers()) {
                 writer.write(val + "\n");
             }
@@ -112,8 +160,7 @@ public class Solution implements Callable<Integer> {
         }
 
         if (!statsService.getFloats().isEmpty()) {
-            //TODO: проверка директории, предложение создать в текущем файле
-            writer = new FileWriter(floatsOutput, isCurrentFiles);
+            writer = new FileWriter(floatsOutput, isAppend);
             for (BigDecimal val : statsService.getFloats()) {
                 writer.write(val + "\n");
             }
@@ -121,15 +168,12 @@ public class Solution implements Callable<Integer> {
         }
 
         if (!statsService.getStrings().isEmpty()) {
-            //TODO: проверка директории, предложение создать в текущем файле
-            writer = new FileWriter(stringOutput, isCurrentFiles);
+            writer = new FileWriter(stringOutput, isAppend);
             for (String val : statsService.getStrings()) {
                 writer.write(val + "\n");
             }
             writer.close();
         }
-
-
 
         return 0;
     }

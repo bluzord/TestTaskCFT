@@ -95,58 +95,58 @@ public class StatsService {
     public void printIntegerShortStats() {
         System.out.println("---Integers:---");
         if (!integers.isEmpty()) {
-            System.out.println("Количество: " + integers.size());
+            System.out.println("Count: " + integers.size());
         }
         else {
-            System.out.println("Отсутствуют целые числа.");
+            System.out.println("There are no integers.");
         }
     }
 
     public void printIntegerFullStats() {
         printIntegerShortStats();
         if (!integers.isEmpty()) {
-            System.out.println("Минимум: " + getMinInteger());
-            System.out.println("Максимум: " + getMaxInteger());
-            System.out.println("Сумма: " + getIntegerSum());
-            System.out.println("Среднее: " + getIntegerAverage());
+            System.out.println("Min: " + getMinInteger());
+            System.out.println("Max: " + getMaxInteger());
+            System.out.println("Sum: " + getIntegerSum());
+            System.out.println("Avg: " + getIntegerAverage());
         }
     }
 
     public void printFloatShortStats() {
         System.out.println("---Floats:---");
         if (!floats.isEmpty()) {
-            System.out.println("Количество: " + floats.size());
+            System.out.println("Count: " + floats.size());
         }
         else {
-            System.out.println("Отсутствуют вещественные числа.");
+            System.out.println("There are no floats.");
         }
     }
 
     public void printFloatFullStats() {
         printFloatShortStats();
         if (!floats.isEmpty()) {
-            System.out.println("Минимум: " + getMinFloat());
-            System.out.println("Максимум: " + getMaxFloat());
-            System.out.println("Сумма: " + getFloatSum());
-            System.out.println("Среднее: " + getFloatAverage());
+            System.out.println("Min: " + getMinFloat());
+            System.out.println("Max: " + getMaxFloat());
+            System.out.println("Sum: " + getFloatSum());
+            System.out.println("Avg: " + getFloatAverage());
         }
     }
 
     public void printStringShortStats() {
         System.out.println("---Strings:---");
         if (!strings.isEmpty()) {
-            System.out.println("Количество: " + strings.size());
+            System.out.println("Count: " + strings.size());
         }
         else {
-            System.out.println("Отсутствуют строки.");
+            System.out.println("There are no strings.");
         }
     }
 
     public void printStringFullStats() {
         printStringShortStats();
         if (!strings.isEmpty()) {
-            System.out.println("Минимальная длина: " + getMinStringLength());
-            System.out.println("Максимальная длина: " + getMaxStringLength());
+            System.out.println("Min length: " + getMinStringLength());
+            System.out.println("Max length: " + getMaxStringLength());
         }
     }
 
