@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatsService {
-    private List<String> strings = new ArrayList<>();
-    private List<BigInteger> integers = new ArrayList<>();
-    private List<BigDecimal> floats = new ArrayList<>();
+    private final List<String> strings = new ArrayList<>();
+    private final List<BigInteger> integers = new ArrayList<>();
+    private final List<BigDecimal> floats = new ArrayList<>();
 
 
     //Методы для целочисленных
@@ -92,6 +92,7 @@ public class StatsService {
         return minLength;
     }
 
+    //Печать статистики
     public void printIntegerShortStats() {
         System.out.println("---Integers:---");
         if (!integers.isEmpty()) {
@@ -150,6 +151,7 @@ public class StatsService {
         }
     }
 
+    //Геттеры
     public List<String> getStrings() {
         return strings;
     }

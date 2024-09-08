@@ -19,8 +19,8 @@ public class Solution implements Callable<Integer> {
 
     private final StatsService statsService = new StatsService();
     private String integerOutput = "integers.txt";
-    private String stringOutput = "strings.txt";
     private String floatsOutput = "floats.txt";
+    private String stringOutput = "strings.txt";
     private final List<BufferedReader> readers = new ArrayList<>();
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Available options.")
@@ -52,6 +52,7 @@ public class Solution implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
 
+        //Создание reader'ов
         for (String fileName : fileNames) {
             try {
                 File file = new File(fileName);
@@ -75,6 +76,7 @@ public class Solution implements Callable<Integer> {
             }
         }
 
+        //Алгоритм поочередного считывания строк из файлов
         boolean hasLines;
         do {
             hasLines = false;
@@ -97,17 +99,20 @@ public class Solution implements Callable<Integer> {
         }
 
         if (isShortStats) {
+            System.out.println("SHORT STATS:");
             statsService.printIntegerShortStats();
             statsService.printFloatShortStats();
             statsService.printStringShortStats();
         }
 
         if (isFullStats) {
+            System.out.println("FULL STATS:");
             statsService.printIntegerFullStats();
             statsService.printFloatFullStats();
             statsService.printStringFullStats();
         }
 
+        //проверка префикса
         if (!prefix.isEmpty()) {
             try  {
                 Paths.get(prefix + integerOutput);
@@ -125,13 +130,19 @@ public class Solution implements Callable<Integer> {
             try {
                 Paths.get(path);
                 directory = new File(path);
+
+                if (!directory.exists()) {
+                    throw new FileNotFoundException("\"" + path + "\"" + " does not exist. The folder will be created automatically.");
+                }
+
                 if (!directory.isDirectory()) {
                     throw new NotDirectoryException(path);
                 }
 
-                if (!directory.exists()) {
-                    throw new FileNotFoundException("\"" + path + "\"" + "does not exist. The folder will be created automatically.");
-                }
+                path += "/";
+                integerOutput = path + integerOutput;
+                floatsOutput = path + floatsOutput;
+                stringOutput = path + stringOutput;
 
             } catch (InvalidPathException | NotDirectoryException e) {
                 System.err.println("Path " + "\"" + path + "\"" + " is invalid. Files will be created in the current folder.");
@@ -144,12 +155,13 @@ public class Solution implements Callable<Integer> {
                     stringOutput = path + stringOutput;
                 }
                 else {
-                    System.err.println("Folder not created. Files will be created in the current folder.");
+                    System.err.println("Oops! Folder is not created. Files will be created in the current folder.");
                 }
             }
 
         }
 
+        //Запись файлов
         FileWriter writer;
         if (!statsService.getIntegers().isEmpty()) {
             writer = new FileWriter(integerOutput, isAppend);
